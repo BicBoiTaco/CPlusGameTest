@@ -38,6 +38,9 @@ int recY = 400;
 int& refY = recY;
 
 
+Rectangle obstacle{ 400, 400, 20, 20 };
+
+
 void MovementInput() {
 	if (IsKeyDown(KEY_RIGHT)) {
 		refX += 1;
@@ -81,11 +84,18 @@ int main ()
 		// draw some text using the default font
 
 
+		Rectangle player = { refX, refY, 50, 50 };
 
 		
+		DrawRectangle(refX, refY, player.width, player.height, WHITE);
+		DrawRectangle(obstacle.x, obstacle.y, obstacle.width, obstacle.height, RED);
 
-
-		DrawRectangle(refX, refY, 50, 50, WHITE);
+		if (CheckCollisionRecs(player, obstacle)) {
+			canMove = false;
+		}
+		else {
+			canMove = true;
+		}
 
 		if (canMove) {
 			MovementInput();
