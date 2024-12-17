@@ -47,11 +47,11 @@ int& refY = recY;
 Rectangle obstacle{ 400, 400, 20, 20 };
 
 
+void ResetGame() {
 
-void GameOver() {
-	canMove = false;
-	//Reset Game Function
-
+	recX = pStartPosX;
+	recY = pStartPosY;
+	canMove = true;
 }
 
 
@@ -109,13 +109,15 @@ int main ()
 
 		if (CheckCollisionRecs(player, obstacle)) {
 			DrawText("Game Over!", 500, 350, 50, RED);
-			for (static bool first = true;first;first = false)
-			{
-				GameOver();
-			}
+			canMove = false;
 		}
 		else {
 			canMove = true;
+		}
+
+		if (IsKeyPressed(KEY_R)) {
+			ResetGame();
+			std::cout << "\n" << "I Work!!!" << "\n";
 		}
 
 		if (canMove) {
