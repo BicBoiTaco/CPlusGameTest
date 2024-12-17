@@ -25,48 +25,62 @@ For a C++ project simply rename the file to .cpp and re-run the build script
 */
 
 #include "raylib-cpp.hpp"
+#include <iostream>
 
 
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
 
 bool canMove = true;
 
-int recX = 30;
+const int moveSpeed = 3;
+
+// Player start pos
+int pStartPosX = 30;
+int pStartPosY = 400;
+
+
+int recX = pStartPosX;
 int& refX = recX;
-
-int recY = 400;
+int recY = pStartPosY;
 int& refY = recY;
-
 
 Rectangle obstacle{ 400, 400, 20, 20 };
 
 
+
+void GameOver() {
+	canMove = false;
+	//Reset Game Function
+
+}
+
+
 void MovementInput() {
 	if (IsKeyDown(KEY_RIGHT)) {
-		refX += 1;
-
+		refX += moveSpeed;
 	}
 	if (IsKeyDown(KEY_LEFT)) {
-		refX -= 1;
+		refX -= moveSpeed;
 	}
 	if (IsKeyDown(KEY_UP)) {
-		refY -= 1;
+		refY -= moveSpeed;
 	}
 	if (IsKeyDown(KEY_DOWN)) {
-		refY += 1;
+		refY += moveSpeed;
 	}
-
-
 }
 
 
 int main ()
 {
+
+
+	SetTargetFPS(60);
 	// Tell the window to use vsync and work on high DPI displays
 	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
 
 	// Create the window and OpenGL context
-	InitWindow(1280, 800, "Test");
+	InitWindow(1280, 800, "Box Game");
 
 	// Utility function from resource_dir.h to find the resources folder and set it as the current working directory so we can load from it
 	SearchAndSetResourceDir("resources");
@@ -75,6 +89,9 @@ int main ()
 	// game loop
 	while (!WindowShouldClose())		// run the loop untill the user presses ESCAPE or presses the Close button on the window
 	{
+
+
+		std::cout << GetFPS() << "\n";
 		// drawing
 		BeginDrawing();
 
@@ -91,7 +108,11 @@ int main ()
 		DrawRectangle(obstacle.x, obstacle.y, obstacle.width, obstacle.height, RED);
 
 		if (CheckCollisionRecs(player, obstacle)) {
-			canMove = false;
+			DrawText("Game Over!", 500, 350, 50, RED);
+			for (static bool first = true;first;first = false)
+			{
+				GameOver();
+			}
 		}
 		else {
 			canMove = true;
