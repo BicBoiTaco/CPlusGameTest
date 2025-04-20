@@ -31,8 +31,13 @@ For a C++ project simply rename the file to .cpp and re-run the build script
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
 
 bool canMove = true;
+bool canMoveUp = true;
+bool canMoveDown = true;
+bool canMoveLeft = true;
+bool canMoveRight = true;
 
 const int moveSpeed = 3;
+int enemyMoveSpeed = 2;
 
 // Player start pos
 int pStartPosX = 30;
@@ -44,11 +49,12 @@ int& refX = recX;
 int recY = pStartPosY;
 int& refY = recY;
 
-Rectangle obstacle{ 400, 400, 20, 20 };
+Rectangle obstacle{ 900, 0, 20, 20 };
+
+
 
 
 void ResetGame() {
-
 	recX = pStartPosX;
 	recY = pStartPosY;
 	canMove = true;
@@ -56,17 +62,17 @@ void ResetGame() {
 
 
 void MovementInput() {
-	if (IsKeyDown(KEY_RIGHT)) {
-		refX += moveSpeed;
+	if (IsKeyDown(KEY_RIGHT) && canMoveRight) {
+		recX += moveSpeed;
 	}
-	if (IsKeyDown(KEY_LEFT)) {
-		refX -= moveSpeed;
+	if (IsKeyDown(KEY_LEFT) && canMoveLeft) {
+		recX -= moveSpeed;
 	}
-	if (IsKeyDown(KEY_UP)) {
-		refY -= moveSpeed;
+	if (IsKeyDown(KEY_UP) && canMoveUp) {
+		recY -= moveSpeed;
 	}
-	if (IsKeyDown(KEY_DOWN)) {
-		refY += moveSpeed;
+	if (IsKeyDown(KEY_DOWN) && canMoveDown) {
+		recY += moveSpeed;
 	}
 }
 
@@ -80,7 +86,7 @@ int main ()
 	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
 
 	// Create the window and OpenGL context
-	InitWindow(1280, 800, "Box Game");
+	InitWindow(800, 800, "Box Game");
 
 	// Utility function from resource_dir.h to find the resources folder and set it as the current working directory so we can load from it
 	SearchAndSetResourceDir("resources");
@@ -105,7 +111,9 @@ int main ()
 
 		
 		DrawRectangle(refX, refY, player.width, player.height, WHITE);
-		DrawRectangle(obstacle.x, obstacle.y, obstacle.width, obstacle.height, RED);
+
+		// I NEED TO MAKE THIS PROCEEDURAL SO THAT MANY SPAWN OFF SCREEN AND SLIDE TOWARDS PLAYER, THEN DELETE WHEN OFFSCREEN AGAIN
+		DrawRectangle(obstacle.x, rand() % 700 + 50, obstacle.width, obstacle.height, RED);
 
 		if (CheckCollisionRecs(player, obstacle)) {
 			DrawText("Game Over!", 500, 350, 50, RED);
@@ -123,6 +131,8 @@ int main ()
 		if (canMove) {
 			MovementInput();
 		}
+		
+		WaitTime(1) 
 		
 
 
