@@ -36,6 +36,15 @@ bool canMoveDown = true;
 bool canMoveLeft = true;
 bool canMoveRight = true;
 
+const int outOfBoundsUp = 0;
+const int outOfBoundsDown = 750;
+const int outOfBoundsLeft = 0;
+const int outOfBoundsRight = 750;
+
+
+
+
+
 const int moveSpeed = 3;
 int enemyMoveSpeed = 2;
 
@@ -104,8 +113,35 @@ int main ()
 		// Setup the back buffer for drawing (clear color and depth buffers)
 		ClearBackground(BLACK);
 
-		// draw some text using the default font
-
+		// Dont allow player out of bounds
+		if (refX > outOfBoundsRight) {
+			refX = outOfBoundsRight;
+			canMoveRight = false;
+		}
+		else {
+			canMoveRight = true;
+		}
+		if (refY > outOfBoundsDown) {
+			refY = outOfBoundsDown;
+			canMoveDown = false;
+		}
+		else {
+			canMoveDown = true;
+		}
+		if (refX < outOfBoundsLeft) {
+			refX = outOfBoundsLeft;
+			canMoveLeft = false;
+		}
+		else {
+			canMoveLeft = true;
+		}
+		if (refY < outOfBoundsUp) {
+			refY = outOfBoundsUp;
+			canMoveUp = false;
+		}
+		else {
+			canMoveUp = true;
+		}
 
 		Rectangle player = { refX, refY, 50, 50 };
 
@@ -132,7 +168,7 @@ int main ()
 			MovementInput();
 		}
 		
-		WaitTime(1) 
+		
 		
 
 
