@@ -26,10 +26,12 @@ For a C++ project simply rename the file to .cpp and re-run the build script
 
 #include "raylib-cpp.hpp"
 #include <iostream>
-
+#include <time.h>  
 
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
 
+
+bool playerIsDead;
 bool canMove = true;
 bool canMoveUp = true;
 bool canMoveDown = true;
@@ -43,10 +45,9 @@ const int outOfBoundsRight = 750;
 
 
 
-
-
 const int moveSpeed = 3;
-int enemyMoveSpeed = 2;
+
+int eStartPosX = 850;
 
 // Player start pos
 int pStartPosX = 30;
@@ -58,16 +59,37 @@ int& refX = recX;
 int recY = pStartPosY;
 int& refY = recY;
 
-Rectangle obstacle{ 900, 0, 20, 20 };
+int RandomHieght() {
+	int objHeight;
+	objHeight = rand() % 700 + 50;
+	return objHeight;
+}
 
-
-
-
-void ResetGame() {
+void ResetPlayer() {
+	playerIsDead = false;
 	recX = pStartPosX;
 	recY = pStartPosY;
 	canMove = true;
+	
 }
+
+
+
+
+
+
+int EnemyMovementSpeed(int enemyType) {
+	int enemySpeed = 1;
+	if (enemyType == 1){
+		enemySpeed = rand() % 2 + 1;
+	}
+	return enemySpeed;
+}
+
+
+
+
+
 
 
 void MovementInput() {
@@ -89,6 +111,10 @@ void MovementInput() {
 int main ()
 {
 
+	srand(time(0));
+
+
+	Rectangle obstacle{ 800, RandomHieght(), 20, 20};
 
 	SetTargetFPS(60);
 	// Tell the window to use vsync and work on high DPI displays
@@ -100,13 +126,16 @@ int main ()
 	// Utility function from resource_dir.h to find the resources folder and set it as the current working directory so we can load from it
 	SearchAndSetResourceDir("resources");
 
+
 	
 	// game loop
 	while (!WindowShouldClose())		// run the loop untill the user presses ESCAPE or presses the Close button on the window
 	{
 
 
-		std::cout << GetFPS() << "\n";
+		//std::cout << GetFPS() << "\n";
+		std::cout << obstacle.y << "\n";
+
 		// drawing
 		BeginDrawing();
 
@@ -145,23 +174,27 @@ int main ()
 
 		Rectangle player = { refX, refY, 50, 50 };
 
-		
+		DrawRectangle(obstacle.x -= EnemyMovementSpeed(1), obstacle.y, obstacle.width, obstacle.height, RED);
+
 		DrawRectangle(refX, refY, player.width, player.height, WHITE);
 
 		// I NEED TO MAKE THIS PROCEEDURAL SO THAT MANY SPAWN OFF SCREEN AND SLIDE TOWARDS PLAYER, THEN DELETE WHEN OFFSCREEN AGAIN
-		DrawRectangle(obstacle.x, rand() % 700 + 50, obstacle.width, obstacle.height, RED);
+		
 
 		if (CheckCollisionRecs(player, obstacle)) {
-			DrawText("Game Over!", 500, 350, 50, RED);
-			canMove = false;
+			bool playerIsDead = true;
 		}
-		else {
-			canMove = true;
+		if (playerIsDead == true) {
+			DrawText("Game Over!", 250, 400, 50, RED);
+			canMove = false;
 		}
 
 		if (IsKeyPressed(KEY_R)) {
-			ResetGame();
+			ResetPlayer();
 			std::cout << "\n" << "I Work!!!" << "\n";
+			obstacle.y = RandomHieght();
+			obstacle.x = eStartPosX;
+
 		}
 
 		if (canMove) {
